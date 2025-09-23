@@ -113,7 +113,23 @@ export default function Home() {
       });
 
       console.log("API response status:", res.status);
-      const data = (await res.json()) as ParseMenuResponseBody;
+
+      // Check if response has content before trying to parse JSON
+      const responseText = await res.text();
+      console.log("Raw response text:", responseText);
+
+      if (!responseText) {
+        throw new Error("Empty response from server");
+      }
+
+      let data: ParseMenuResponseBody;
+      try {
+        data = JSON.parse(responseText);
+      } catch (jsonError) {
+        console.error("JSON parse error:", jsonError);
+        throw new Error(`Invalid JSON response: ${responseText.substring(0, 100)}...`);
+      }
+
       console.log("API response data:", data);
 
       // Only update the menu if this is still the current request
