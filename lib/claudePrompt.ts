@@ -28,6 +28,7 @@ Return ONLY strict JSON (no code fences) matching this TypeScript-like schema:
 }
 
 Rules:
+- EXTRACT ALL VISIBLE MENU ITEMS - do not skip any items from the image.
 - Identify menu sections (e.g., Appetizers, Mains, Desserts). If not explicit, infer reasonable grouping.
 - Preserve original names, descriptions, pricing and include translations in the user's preferred language.
 - Provide appetizing, clear descriptions.
@@ -60,9 +61,14 @@ export function buildUserPrompt(preferredLanguage: string) {
 
   const explicitLanguage = languageMapping[preferredLanguage] || preferredLanguage;
 
-  return `Extract the full menu from the image and translate everything to ${explicitLanguage}.
+  return `Extract the COMPLETE menu from the image and translate everything to ${explicitLanguage}.
 
-IMPORTANT: The target language is ${explicitLanguage}. Make sure all translated text is in this specific language.
+CRITICAL INSTRUCTIONS:
+- Parse ALL visible menu items - do not skip any dishes, even if the image is dense or has many items
+- Include ALL prices, both individual (单价) and combo (套餐) prices where shown
+- The target language is ${explicitLanguage}. Make sure all translated text is in this specific language.
+- If you see multiple columns or sections, parse every single item from each section
+- Pay special attention to small text and items that might be partially visible
 
 Respond with JSON only as per the schema.`;
 }
