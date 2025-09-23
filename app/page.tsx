@@ -26,6 +26,7 @@ export default function Home() {
   const [showPickForMe, setShowPickForMe] = useState(false);
   const [lastImageData, setLastImageData] = useState<string | null>(null);
   const [uiLanguage, setUiLanguage] = useState(preferredLanguage);
+  const [loadingLanguage, setLoadingLanguage] = useState<string | null>(null);
   const currentTranslationRequestRef = useRef<string | null>(null);
 
   const t = getTranslations(uiLanguage);
@@ -103,45 +104,25 @@ export default function Home() {
     currentTranslationRequestRef.current = requestId;
     setError(null);
     setLoading(true);
+    setLoadingLanguage(language);
 
     try {
-      console.log("Processing image with language:", language);
       const res = await fetch("/api/parse", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ imageBase64: dataUrl, preferredLanguage: language }),
       });
 
-      console.log("API response status:", res.status);
-
-      // Check if response has content before trying to parse JSON
-      const responseText = await res.text();
-      console.log("Raw response text:", responseText);
-
-      if (!responseText) {
-        throw new Error("Empty response from server");
-      }
-
-      let data: ParseMenuResponseBody;
-      try {
-        data = JSON.parse(responseText);
-      } catch (jsonError) {
-        console.error("JSON parse error:", jsonError);
-        throw new Error(`Invalid JSON response: ${responseText.substring(0, 100)}...`);
-      }
-
-      console.log("API response data:", data);
+      const data = (await res.json()) as ParseMenuResponseBody;
 
       // Only update the menu if this is still the current request
       if (currentTranslationRequestRef.current === requestId) {
         if (!data.ok) throw new Error(data.error);
-        console.log("Setting menu with sections:", data.menu?.sections?.length);
         setMenu(data.menu);
         // Update UI language only after successful translation
         setUiLanguage(language);
       }
     } catch (e: any) {
-      console.error("Error processing image:", e);
       // Only show error if this is still the current request
       if (currentTranslationRequestRef.current === requestId) {
         setError(e?.message || t.failedToParseMenu);
@@ -149,8 +130,8 @@ export default function Home() {
     } finally {
       // Only clear loading if this is still the current request
       if (currentTranslationRequestRef.current === requestId) {
-        console.log("Clearing loading state");
         setLoading(false);
+        setLoadingLanguage(null);
       }
     }
   }
@@ -263,8 +244,8 @@ export default function Home() {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white rounded-xl p-8 text-center shadow-lg">
             <div className="w-12 h-12 border-4 border-gray-200 border-t-green-600 rounded-full animate-spin mx-auto mb-4"></div>
-            <div className="text-gray-900 text-lg font-medium">{t.analyzingMenu}</div>
-            <div className="text-gray-500 text-sm mt-1">{t.thisWillTakeAMoment}</div>
+            <div className="text-gray-900 text-lg font-medium">{getTranslations(loadingLanguage || uiLanguage).analyzingMenu}</div>
+            <div className="text-gray-500 text-sm mt-1">{getTranslations(loadingLanguage || uiLanguage).thisWillTakeAMoment}</div>
           </div>
         </div>
       )}
