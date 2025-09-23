@@ -42,7 +42,7 @@ export default function OrderSummary({ onClose, uiLanguage }: { onClose: () => v
 
   const groupedSelections = useMemo(() => {
     if (!fullScreen) return null;
-    const groups: Record<string, typeof selections> = {};
+    const groups: Record<string, Array<typeof selections[0]>> = {};
     for (const selection of selections) {
       const sectionId = selection.sectionId;
       if (!groups[sectionId]) groups[sectionId] = [];
