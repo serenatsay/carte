@@ -105,21 +105,27 @@ export default function Home() {
     setLoading(true);
 
     try {
+      console.log("Processing image with language:", language);
       const res = await fetch("/api/parse", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ imageBase64: dataUrl, preferredLanguage: language }),
       });
+
+      console.log("API response status:", res.status);
       const data = (await res.json()) as ParseMenuResponseBody;
+      console.log("API response data:", data);
 
       // Only update the menu if this is still the current request
       if (currentTranslationRequestRef.current === requestId) {
         if (!data.ok) throw new Error(data.error);
+        console.log("Setting menu with sections:", data.menu?.sections?.length);
         setMenu(data.menu);
         // Update UI language only after successful translation
         setUiLanguage(language);
       }
     } catch (e: any) {
+      console.error("Error processing image:", e);
       // Only show error if this is still the current request
       if (currentTranslationRequestRef.current === requestId) {
         setError(e?.message || t.failedToParseMenu);
@@ -127,6 +133,7 @@ export default function Home() {
     } finally {
       // Only clear loading if this is still the current request
       if (currentTranslationRequestRef.current === requestId) {
+        console.log("Clearing loading state");
         setLoading(false);
       }
     }
