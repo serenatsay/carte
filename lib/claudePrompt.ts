@@ -28,10 +28,13 @@ Return ONLY strict JSON (no code fences) matching this TypeScript-like schema:
 }
 
 Rules:
-- EXTRACT ALL VISIBLE MENU ITEMS - do not skip any items from the image.
+- EXTRACT EVERY SINGLE VISIBLE MENU ITEM - scan the entire image systematically, do not skip any items.
+- Parse each line of text that describes a food or drink item, even if formatting varies.
 - Identify menu sections (e.g., Appetizers, Mains, Desserts). If not explicit, infer reasonable grouping.
+- When you see lists or bullet points under categories, treat each as a separate menu item.
+- Include variations, options, and accompaniments as individual items when they appear to be distinct choices.
 - Preserve original names, descriptions, pricing and include translations in the user's preferred language.
-- Provide appetizing, clear descriptions.
+- Provide appetizing, clear descriptions for items that lack descriptions.
 - Note cultural significance and mark items as Local Specialty or Must Try when appropriate.
 - List common allergens for each item. If unknown, use ["none"].
 - Estimate spice level (0-5) and dietary categories when relevant.
@@ -63,12 +66,18 @@ export function buildUserPrompt(preferredLanguage: string) {
 
   return `Extract the COMPLETE menu from the image and translate everything to ${explicitLanguage}.
 
-CRITICAL INSTRUCTIONS:
-- Parse ALL visible menu items - do not skip any dishes, even if the image is dense or has many items
-- Include ALL prices, both individual (单价) and combo (套餐) prices where shown
+CRITICAL INSTRUCTIONS - READ CAREFULLY:
+- Parse EVERY SINGLE menu item visible in the image - do not skip ANY dishes
+- Count each item as you go to ensure completeness
+- Look at BOTH left and right columns/sections thoroughly
+- Include sub-items, variations, and options under main categories
+- Include ALL accompaniments, sides, and add-ons mentioned
+- Parse items even if they appear as simple lists or bullet points
 - The target language is ${explicitLanguage}. Make sure all translated text is in this specific language.
-- If you see multiple columns or sections, parse every single item from each section
-- Pay special attention to small text and items that might be partially visible
+- If sections have multiple items listed, parse each one individually
+- Look for items that might be in smaller text or different formatting
+
+VERIFICATION: Before responding, double-check that you've captured every visible food/drink item from the entire menu.
 
 Respond with JSON only as per the schema.`;
 }
