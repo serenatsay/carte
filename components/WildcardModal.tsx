@@ -116,19 +116,19 @@ export default function WildcardModal({ onClose, onWildcardOrder, menu, preferre
           {/* Hunger Level */}
           <div>
             <label className="block text-lg font-bold text-gray-900 mb-4">{t.howHungryAreYou}</label>
-            <div className="space-y-3">
+            <div className="flex flex-wrap gap-2">
               {(Object.keys(hungerLabels) as HungerLevel[]).map((level) => (
                 <button
                   key={level}
                   type="button"
                   onClick={() => setHungerLevel(level)}
-                  className={`w-full py-3 px-4 rounded-full text-center transition-all duration-200 font-medium ${
+                  className={`flex-1 py-3 px-3 rounded-xl text-center transition-all duration-200 font-medium text-sm min-w-0 ${
                     hungerLevel === level
-                      ? 'bg-green-700 text-white shadow-lg'
-                      : 'bg-gray-100 text-gray-900 hover:bg-gray-200 shadow-sm hover:shadow-md'
+                      ? 'bg-green-700 text-white shadow-lg border-2 border-green-700'
+                      : 'bg-gray-50 text-gray-900 hover:bg-gray-100 shadow-sm hover:shadow-md border-2 border-gray-200'
                   }`}
                 >
-                  {level === 'light' ? t.lightBites : level === 'moderate' ? t.moderateMeal : level === 'hungry' ? t.fullMeal : t.letsFeast}
+                  {level === 'light' ? 'Light' : level === 'moderate' ? 'Moderate' : level === 'hungry' ? 'Hungry' : 'Feast'}
                 </button>
               ))}
             </div>
@@ -137,28 +137,28 @@ export default function WildcardModal({ onClose, onWildcardOrder, menu, preferre
           {/* Adventure Level */}
           <div>
             <label className="block text-lg font-bold text-gray-900 mb-4">{t.adventureLevel}</label>
-            <div className="space-y-3">
+            <div className="flex gap-2">
               <button
                 type="button"
                 onClick={() => setAdventurous(false)}
-                className={`w-full py-3 px-4 rounded-full text-center transition-all duration-200 font-medium ${
+                className={`flex-1 py-3 px-4 rounded-xl text-center transition-all duration-200 font-medium ${
                   !adventurous
-                    ? 'bg-green-700 text-white shadow-lg'
-                    : 'bg-gray-100 text-gray-900 hover:bg-gray-200 shadow-sm hover:shadow-md'
+                    ? 'bg-green-700 text-white shadow-lg border-2 border-green-700'
+                    : 'bg-gray-50 text-gray-900 hover:bg-gray-100 shadow-sm hover:shadow-md border-2 border-gray-200'
                 }`}
               >
-                {t.safeChoices}
+                Safe picks
               </button>
               <button
                 type="button"
                 onClick={() => setAdventurous(true)}
-                className={`w-full py-3 px-4 rounded-full text-center transition-all duration-200 font-medium ${
+                className={`flex-1 py-3 px-4 rounded-xl text-center transition-all duration-200 font-medium ${
                   adventurous
-                    ? 'bg-green-700 text-white shadow-lg'
-                    : 'bg-gray-100 text-gray-900 hover:bg-gray-200 shadow-sm hover:shadow-md'
+                    ? 'bg-green-700 text-white shadow-lg border-2 border-green-700'
+                    : 'bg-gray-50 text-gray-900 hover:bg-gray-100 shadow-sm hover:shadow-md border-2 border-gray-200'
                 }`}
               >
-                {t.adventurous}
+                Adventurous
               </button>
             </div>
           </div>
