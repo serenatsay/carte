@@ -208,6 +208,7 @@ export default function Home() {
                 onChange={(value) => {
                   setPreferredLanguage(value);
                   if (lastImageData) {
+                    setLoadingLanguage(value); // Set loading language immediately
                     processImage(lastImageData, value);
                   }
                 }}

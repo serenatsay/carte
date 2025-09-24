@@ -76,19 +76,66 @@ export default function CameraCapture({ onCapture, onBatchCapture, preferredLang
     onCapture(dataUrl);
   }
 
+  function compressImage(file: File): Promise<string> {
+    return new Promise((resolve) => {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      const img = new Image();
+
+      img.onload = () => {
+        // Calculate new dimensions (max 1920px on longest side)
+        let { width, height } = img;
+        const maxDimension = 1920;
+
+        if (width > height) {
+          if (width > maxDimension) {
+            height = (height * maxDimension) / width;
+            width = maxDimension;
+          }
+        } else {
+          if (height > maxDimension) {
+            width = (width * maxDimension) / height;
+            height = maxDimension;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+
+        // Draw and compress
+        ctx?.drawImage(img, 0, 0, width, height);
+
+        // Start with decent quality and reduce if needed
+        let quality = 0.8;
+        let dataUrl = canvas.toDataURL('image/jpeg', quality);
+
+        // Keep reducing quality until under 800KB
+        while (dataUrl.length * 0.75 / 1024 > 800 && quality > 0.3) {
+          quality -= 0.1;
+          dataUrl = canvas.toDataURL('image/jpeg', quality);
+        }
+
+        console.log(`Compressed image: ${Math.round(dataUrl.length * 0.75 / 1024)}KB at quality ${quality.toFixed(1)}`);
+        resolve(dataUrl);
+      };
+
+      img.src = URL.createObjectURL(file);
+    });
+  }
+
   function onFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
-    // Handle multiple files
+    // Handle multiple files with compression
     const fileArray = Array.from(files);
     const dataUrls: string[] = [];
     let processedCount = 0;
 
-    fileArray.forEach((file, index) => {
-      const reader = new FileReader();
-      reader.onload = () => {
-        const dataUrl = String(reader.result);
+    fileArray.forEach(async (file, index) => {
+      try {
+        // Compress large images
+        const dataUrl = await compressImage(file);
         dataUrls[index] = dataUrl;
         processedCount++;
 
@@ -104,8 +151,27 @@ export default function CameraCapture({ onCapture, onBatchCapture, preferredLang
             onBatchCapture(dataUrls);
           }
         }
-      };
-      reader.readAsDataURL(file);
+      } catch (err) {
+        console.error('Error compressing image:', err);
+        // Fallback to original file reading
+        const reader = new FileReader();
+        reader.onload = () => {
+          const dataUrl = String(reader.result);
+          dataUrls[index] = dataUrl;
+          processedCount++;
+
+          if (processedCount === fileArray.length) {
+            if (dataUrls.length === 1) {
+              setCaptured(dataUrls[0]);
+              onCapture(dataUrls[0]);
+            } else {
+              setBatchProcessing(dataUrls.length);
+              onBatchCapture(dataUrls);
+            }
+          }
+        };
+        reader.readAsDataURL(file);
+      }
     });
   }
 

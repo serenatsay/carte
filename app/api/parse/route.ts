@@ -56,7 +56,7 @@ export async function POST(req: NextRequest) {
       },
       body: JSON.stringify({
         model: ANTHROPIC_MODEL,
-        max_tokens: 4000,
+        max_tokens: 8000, // Increased for complex menus
         system: systemPrompt,
         messages: [
           {
@@ -75,8 +75,10 @@ export async function POST(req: NextRequest) {
 
     if (!anthropicRes.ok) {
       const text = await anthropicRes.text();
+      console.error(`Claude API Error (${anthropicRes.status}):`, text);
+      console.error(`Image size estimate:`, imageBase64?.length ? `${Math.round(imageBase64.length * 0.75 / 1024)}KB` : 'unknown');
       return new Response(
-        JSON.stringify({ ok: false, error: `Claude request failed: ${text}` }),
+        JSON.stringify({ ok: false, error: `Claude request failed (${anthropicRes.status}): ${text}` }),
         { status: 502, headers: { "content-type": "application/json" } }
       );
     }
@@ -102,6 +104,7 @@ export async function POST(req: NextRequest) {
       const resp: ParseMenuResponseBody = { ok: false, error: "Failed to parse structured menu JSON" };
       return new Response(JSON.stringify(resp), { status: 502, headers: { "content-type": "application/json" } });
     }
+
 
     const resp: ParseMenuResponseBody = { ok: true, menu: parsed };
     return new Response(JSON.stringify(resp), { status: 200, headers: { "content-type": "application/json" } });
