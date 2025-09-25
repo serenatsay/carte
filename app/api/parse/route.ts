@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
     const body = (await req.json()) as ParseMenuRequestBody;
 
     // Extract media type and base64 data
-    let mediaType = "image/jpeg"; // default
+    let mediaType = "image/jpeg"; // default fallback
     let imageBase64 = body.imageBase64;
 
     if (body.imageBase64?.startsWith("data:")) {
@@ -37,6 +37,36 @@ export async function POST(req: NextRequest) {
         mediaType = match[1];
       }
     }
+
+    // Always try to detect format from base64 header regardless of data URL prefix
+    if (imageBase64) {
+      // PNG starts with iVBORw0KGgo
+      if (imageBase64.startsWith('iVBORw0KGgo')) {
+        mediaType = 'image/png';
+      }
+      // JPEG/JPG variants - more comprehensive check
+      else if (imageBase64.startsWith('/9j/') || imageBase64.startsWith('/9k/') || imageBase64.startsWith('iVBOR')) {
+        if (imageBase64.startsWith('iVBOR')) {
+          mediaType = 'image/png';
+        } else {
+          mediaType = 'image/jpeg';
+        }
+      }
+      // WebP starts with UklGR
+      else if (imageBase64.startsWith('UklGR')) {
+        mediaType = 'image/webp';
+      }
+      // If we can't detect, let Claude try to handle it as JPEG
+      else {
+        console.log(`⚠️  Unknown image format, base64 starts with: ${imageBase64.substring(0, 20)}`);
+        mediaType = 'image/jpeg'; // fallback
+      }
+    }
+
+    // Debug logging for media type detection
+    console.log(`🔍 Media type detected: ${mediaType}`);
+    console.log(`📄 Base64 starts with: ${imageBase64?.substring(0, 30)}...`);
+    console.log(`📏 Image size estimate: ${imageBase64?.length ? `${Math.round(imageBase64.length * 0.75 / 1024)}KB` : 'unknown'}`);
 
     if (!imageBase64) {
       return new Response(
@@ -105,6 +135,44 @@ export async function POST(req: NextRequest) {
       return new Response(JSON.stringify(resp), { status: 502, headers: { "content-type": "application/json" } });
     }
 
+    // Debug logging for development
+    if (process.env.NODE_ENV === 'development') {
+      const allItems = parsed.sections.flatMap(section =>
+        section.items.map(item => ({
+          name: item.translatedName || item.originalName,
+          original: item.originalName,
+          price: item.price?.amount,
+          priceRaw: item.price?.raw,
+          section: section.translatedTitle || section.originalTitle
+        }))
+      );
+
+      console.log("\n=== DETAILED PARSING DEBUG ===");
+      console.log(`✓ Total items parsed: ${allItems.length}`);
+      console.log(`📂 Sections (${parsed.sections.length}): ${parsed.sections.map(s => s.translatedTitle || s.originalTitle || 'Untitled').join(", ")}`);
+      console.log(`🌍 Detected languages: Original="${parsed.originalLanguage}", Target="${parsed.translatedLanguage}"`);
+
+      // Show all parsed items with more detail
+      console.log("\n📋 All parsed items with debug info:");
+      allItems.forEach((item, i) => {
+        const priceStr = item.price ? `€${item.price}` : (item.priceRaw || 'No price');
+        console.log(`${i + 1}. "${item.name}" (Original: "${item.original}") - ${priceStr} [${item.section || 'No section'}]`);
+      });
+
+      // Show raw section data
+      console.log("\n🔍 Raw section structure:");
+      parsed.sections.forEach((section, i) => {
+        console.log(`Section ${i + 1}: "${section.translatedTitle || section.originalTitle}" (${section.items.length} items)`);
+        section.items.slice(0, 3).forEach((item, j) => {
+          console.log(`  - ${j + 1}. "${item.originalName}" → "${item.translatedName}"`);
+        });
+        if (section.items.length > 3) {
+          console.log(`  - ... and ${section.items.length - 3} more items`);
+        }
+      });
+
+      console.log("=== END DEBUG INFO ===\n");
+    }
 
     const resp: ParseMenuResponseBody = { ok: true, menu: parsed };
     return new Response(JSON.stringify(resp), { status: 200, headers: { "content-type": "application/json" } });

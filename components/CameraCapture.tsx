@@ -150,6 +150,8 @@ export default function CameraCapture({ onCapture, onBatchCapture, preferredLang
             setBatchProcessing(dataUrls.length);
             onBatchCapture(dataUrls);
           }
+          // Clear the input to allow re-selecting the same file
+          e.target.value = '';
         }
       } catch (err) {
         console.error('Error compressing image:', err);
@@ -168,6 +170,8 @@ export default function CameraCapture({ onCapture, onBatchCapture, preferredLang
               setBatchProcessing(dataUrls.length);
               onBatchCapture(dataUrls);
             }
+            // Clear the input to allow re-selecting the same file
+            e.target.value = '';
           }
         };
         reader.readAsDataURL(file);

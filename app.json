@@ -1,0 +1,15 @@
+{
+  "expo": {
+    "extra": {
+      "eas": {
+        "projectId": "db016d62-7bc9-4250-83d3-29252e565916"
+      }
+    },
+    "ios": {
+      "bundleIdentifier": "com.serenatsay.carte",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
+    }
+  }
+}
