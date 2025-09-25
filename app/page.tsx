@@ -155,7 +155,6 @@ export default function Home() {
     setShowSummary(true);
   }
 
-  console.log("Render state:", { menu: !!menu, loading, error });
 
   return (
     <main className="min-h-dvh bg-gray-50 pb-36">
