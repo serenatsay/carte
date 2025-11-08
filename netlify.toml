@@ -1,5 +1,5 @@
 [build]
-  command = "rm -rf carte-mobile carte-mobile-fresh && npm run build"
+  command = "bash build.sh"
   publish = ".next"
 
 [[plugins]]
