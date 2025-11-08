@@ -7,12 +7,15 @@ Return ONLY strict JSON (no code fences) matching this TypeScript-like schema:
     id: string,
     originalTitle?: string,
     translatedTitle?: string,
+    translatedTitlePinyin?: string,
     items: Array<{
       id: string,
       originalName: string,
       originalDescription?: string,
       translatedName: string,
+      translatedNamePinyin?: string,
       translatedDescription?: string,
+      translatedDescriptionPinyin?: string,
       culturalNotes?: string,
       allergens: Array<
         "nuts"|"peanuts"|"dairy"|"gluten"|"soy"|"eggs"|"shellfish"|"fish"|"sesame"|"none"
@@ -81,6 +84,13 @@ CONTENT PARSING:
 - List common allergens for each item. If unknown, use ["none"].
 - Estimate spice level (0-5) and dietary categories when relevant.
 
+PINYIN FOR CHINESE TRANSLATIONS:
+- When translating to Simplified Chinese (中文简体) or Traditional Chinese (中文繁體), ALWAYS include pinyin romanization.
+- Add pinyin in these fields: translatedNamePinyin, translatedDescriptionPinyin, translatedTitlePinyin
+- Use proper pinyin with tone marks (e.g., "gōngbǎo jīdīng" for 宫保鸡丁)
+- Format: lowercase with spaces between words, include tone marks
+- Example: translatedName: "宫保鸡丁", translatedNamePinyin: "gōngbǎo jīdīng"
+
 PRICING:
 - For prices: Handle various formats carefully. Common patterns include:
   * "3'00" or "3,00" often means 3.00 (decimal separator varies by country)
@@ -124,8 +134,10 @@ export function buildUserPrompt(preferredLanguage: string) {
   };
 
   const explicitLanguage = languageMapping[preferredLanguage] || preferredLanguage;
+  const isChinese = preferredLanguage === 'Chinese Simplified' || preferredLanguage === 'Chinese Traditional';
+  const pinyinNote = isChinese ? '\n\nIMPORTANT: Since you are translating to Chinese, you MUST include pinyin romanization in translatedNamePinyin, translatedDescriptionPinyin, and translatedTitlePinyin fields. Use proper pinyin with tone marks.' : '';
 
-  return `Extract the COMPLETE menu from the image and translate everything to ${explicitLanguage}.
+  return `Extract the COMPLETE menu from the image and translate everything to ${explicitLanguage}.${pinyinNote}
 
 CRITICAL SCANNING METHODOLOGY:
 1. DIVIDE the image into a GRID mentally (top-left, top-right, bottom-left, bottom-right)

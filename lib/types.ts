@@ -23,7 +23,9 @@ export interface MenuItem {
   originalName: string;
   originalDescription?: string;
   translatedName: string;
+  translatedNamePinyin?: string; // Pinyin romanization for Chinese translations
   translatedDescription?: string;
+  translatedDescriptionPinyin?: string; // Pinyin romanization for Chinese descriptions
   culturalNotes?: string;
   allergens: Allergen[];
   dietaryCategories?: DietaryCategory[];
@@ -40,6 +42,7 @@ export interface MenuSection {
   id: string;
   originalTitle?: string;
   translatedTitle?: string;
+  translatedTitlePinyin?: string; // Pinyin romanization for Chinese section titles
   items: MenuItem[];
 }
 
