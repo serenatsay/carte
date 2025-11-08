@@ -51,7 +51,14 @@ export default function CameraCapture({ onCapture, onBatchCapture, preferredLang
           }
         }
       } catch (e: any) {
-        setError(e?.message || t.cameraError);
+        // Provide more specific error messages based on the error type
+        if (e?.name === 'NotAllowedError' || e?.message?.includes('permission') || e?.message?.includes('denied')) {
+          setError(t.cameraPermissionDenied || 'Camera permission denied. Please allow camera access in your browser settings, then refresh the page. You can also use the gallery button below to upload a photo instead.');
+        } else if (e?.name === 'NotFoundError') {
+          setError(t.cameraNotFound || 'No camera found on this device. Please use the gallery button below to upload a photo.');
+        } else {
+          setError(e?.message || t.cameraError);
+        }
       }
     }
     start();
@@ -202,8 +209,14 @@ export default function CameraCapture({ onCapture, onBatchCapture, preferredLang
         <video ref={videoRef} className="w-full h-full object-cover" playsInline muted />
 
         {error && (
-          <div className="absolute top-4 left-4 right-4 bg-red-600 text-white text-sm p-3 rounded-lg z-10">
-            {error}
+          <div className="absolute inset-4 flex items-center justify-center z-10">
+            <div className="bg-red-600 text-white text-sm p-4 rounded-lg max-w-sm shadow-lg">
+              <div className="font-semibold mb-2">Camera Access Issue</div>
+              <div className="mb-3">{error}</div>
+              <div className="text-xs bg-red-700 p-2 rounded">
+                💡 Tip: Click the gallery icon (bottom left) to upload a photo from your device instead.
+              </div>
+            </div>
           </div>
         )}
       </div>
@@ -221,8 +234,8 @@ export default function CameraCapture({ onCapture, onBatchCapture, preferredLang
 
       {/* Gallery Button - Bottom Left */}
       <div className="absolute bottom-8 left-8">
-        <label className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center cursor-pointer hover:bg-white/30 transition-colors">
-          <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+        <label className={`w-12 h-12 ${error ? 'bg-white animate-pulse' : 'bg-white/20'} rounded-xl flex items-center justify-center cursor-pointer hover:bg-white/30 transition-colors ${error ? 'ring-4 ring-white/50' : ''}`}>
+          <svg className={`w-6 h-6 ${error ? 'text-green-600' : 'text-white'}`} fill="currentColor" viewBox="0 0 24 24">
             <path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zm16 2H4v8l4-4 4 4 4-4 4 4V6zm-5 3a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
           </svg>
           <input

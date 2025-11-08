@@ -52,6 +52,8 @@ export interface Translations {
   // Camera
   cameraNotAvailable: string;
   cameraError: string;
+  cameraPermissionDenied: string;
+  cameraNotFound: string;
   retrying: string;
 
   // Errors
@@ -99,6 +101,8 @@ export const translations: Record<string, Translations> = {
     letsFeast: "Let's feast!",
     cameraNotAvailable: "Camera not available. Use upload.",
     cameraError: "Camera error",
+    cameraPermissionDenied: "Camera permission denied. Please allow camera access in your browser settings, then refresh the page. You can also use the gallery button to upload a photo instead.",
+    cameraNotFound: "No camera found on this device. Please use the gallery button to upload a photo.",
     retrying: "Retrying...",
     failedToParseMenu: "Failed to parse menu",
     failedToGeneratePickForMe: "Failed to generate order"
@@ -143,6 +147,8 @@ export const translations: Record<string, Translations> = {
     letsFeast: "¡A festejar!",
     cameraNotAvailable: "Cámara no disponible. Usa subir archivo.",
     cameraError: "Error de cámara",
+    cameraPermissionDenied: "Permiso de cámara denegado. Por favor, permite el acceso a la cámara en la configuración de tu navegador y luego actualiza la página. También puedes usar el botón de galería para subir una foto.",
+    cameraNotFound: "No se encontró cámara en este dispositivo. Por favor, usa el botón de galería para subir una foto.",
     retrying: "Reintentando...",
     failedToParseMenu: "Error al analizar el menú",
     failedToGeneratePickForMe: "Error al generar orden"
@@ -187,6 +193,8 @@ export const translations: Record<string, Translations> = {
     letsFeast: "Festoyons!",
     cameraNotAvailable: "Caméra non disponible. Utilisez le téléchargement.",
     cameraError: "Erreur de caméra",
+    cameraPermissionDenied: "Autorisation de caméra refusée. Veuillez autoriser l'accès à la caméra dans les paramètres de votre navigateur, puis actualiser la page. Vous pouvez également utiliser le bouton galerie pour télécharger une photo.",
+    cameraNotFound: "Aucune caméra trouvée sur cet appareil. Veuillez utiliser le bouton galerie pour télécharger une photo.",
     retrying: "Nouvelle tentative...",
     failedToParseMenu: "Échec de l'analyse du menu",
     failedToGeneratePickForMe: "Échec de la génération de commande"
@@ -231,6 +239,8 @@ export const translations: Record<string, Translations> = {
     letsFeast: "讓我們盛宴！",
     cameraNotAvailable: "相機不可用。使用上傳。",
     cameraError: "相機錯誤",
+    cameraPermissionDenied: "相機權限被拒絕。請在瀏覽器設定中允許相機存取，然後重新整理頁面。您也可以使用圖庫按鈕上傳照片。",
+    cameraNotFound: "此裝置未找到相機。請使用圖庫按鈕上傳照片。",
     retrying: "重試中...",
     failedToParseMenu: "解析菜單失敗",
     failedToGeneratePickForMe: "生成訂單失敗"
@@ -275,6 +285,8 @@ export const translations: Record<string, Translations> = {
     letsFeast: "Давайте пировать!",
     cameraNotAvailable: "Камера недоступна. Используйте загрузку.",
     cameraError: "Ошибка камеры",
+    cameraPermissionDenied: "Доступ к камере запрещен. Пожалуйста, разрешите доступ к камере в настройках браузера, затем обновите страницу. Вы также можете использовать кнопку галереи для загрузки фото.",
+    cameraNotFound: "Камера не найдена на этом устройстве. Пожалуйста, используйте кнопку галереи для загрузки фото.",
     retrying: "Повторная попытка...",
     failedToParseMenu: "Не удалось проанализировать меню",
     failedToGeneratePickForMe: "Не удалось создать заказ"
