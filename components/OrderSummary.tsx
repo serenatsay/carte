@@ -12,7 +12,7 @@ export default function OrderSummary({ onClose, uiLanguage }: { onClose: () => v
   const t = getTranslations(uiLanguage || preferredLanguage);
 
   const selections = useMemo(() => {
-    if (!menu) return [] as Array<{ id: string; name: string; original: string; qty: number; price?: { amount?: number; currency?: string; raw?: string }; isWildcard?: boolean; wildcardReason?: string; sectionId: string; sectionTitle?: string }>;
+    if (!menu) return [] as Array<{ id: string; name: string; original: string; pinyin?: string; qty: number; price?: { amount?: number; currency?: string; raw?: string }; isWildcard?: boolean; wildcardReason?: string; sectionId: string; sectionTitle?: string }>;
     const byId: Record<string, { sectionId: string; item: any; sectionTitle: string }> = {};
     for (const sec of menu.sections) {
       for (const it of sec.items) {
@@ -30,6 +30,7 @@ export default function OrderSummary({ onClose, uiLanguage }: { onClose: () => v
         id: itemId,
         name: fullScreen ? (item?.originalName ?? item?.translatedName ?? itemId) : (item?.translatedName ?? itemId),
         original: fullScreen ? (item?.translatedName ?? "") : (item?.originalName ?? ""),
+        pinyin: item?.pinyin,
         qty: quantity,
         price: item?.price,
         isWildcard,
@@ -95,6 +96,9 @@ export default function OrderSummary({ onClose, uiLanguage }: { onClose: () => v
                             <div className="font-medium text-lg">{s.qty}x</div>
                             <div className="font-medium">{s.name}</div>
                           </div>
+                          {s.pinyin && (
+                            <div className="text-blue-600 text-sm italic ml-8">{s.pinyin}</div>
+                          )}
                           <div className="text-gray-500 text-sm ml-8">{s.original}</div>
                         </div>
                       </div>
@@ -109,6 +113,9 @@ export default function OrderSummary({ onClose, uiLanguage }: { onClose: () => v
                 <div key={s.id} className="flex items-center justify-between">
                   <div className="flex-1">
                     <div className="font-medium">{s.name}</div>
+                    {s.pinyin && (
+                      <div className="text-blue-600 text-sm italic">{s.pinyin}</div>
+                    )}
                     <div className="text-gray-500 text-sm">{s.original}</div>
                     <div className="flex items-center gap-2 mt-1">
                       {s.isWildcard && s.wildcardReason && (
