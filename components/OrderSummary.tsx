@@ -96,9 +96,6 @@ export default function OrderSummary({ onClose, uiLanguage }: { onClose: () => v
                             <div className="font-medium text-lg">{s.qty}x</div>
                             <div className="font-medium">{s.name}</div>
                           </div>
-                          {s.pinyin && (
-                            <div className="text-blue-600 text-sm italic ml-8">{s.pinyin}</div>
-                          )}
                           <div className="text-gray-500 text-sm ml-8">{s.original}</div>
                         </div>
                       </div>
