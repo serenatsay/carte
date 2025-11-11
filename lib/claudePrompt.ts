@@ -84,14 +84,15 @@ CONTENT PARSING:
 - List common allergens for each item. If unknown, use ["none"].
 - Estimate spice level (0-5) and dietary categories when relevant.
 
-PINYIN ROMANIZATION (for Chinese menus):
-- If the original menu text contains Chinese characters (Simplified or Traditional), include pinyin romanization.
-- Add "pinyin" field to items with the pinyin romanization of originalName.
-- Add "pinyinDescription" field if originalDescription contains Chinese characters.
-- Add "pinyinTitle" field to sections if originalTitle contains Chinese characters.
-- Use standard Hanyu Pinyin with tone marks (e.g., "má là huǒ guō" for 麻辣火锅).
-- Pinyin should be properly spaced by word/phrase, not character-by-character.
-- If the menu is NOT in Chinese, omit the pinyin fields entirely.
+PINYIN ROMANIZATION (MANDATORY for Chinese menus):
+- If originalName, originalDescription, or originalTitle contains ANY Chinese characters (汉字/漢字), you MUST include the corresponding pinyin field.
+- For each item with Chinese characters in originalName: REQUIRED "pinyin" field with Hanyu Pinyin romanization
+- For each item with Chinese characters in originalDescription: REQUIRED "pinyinDescription" field
+- For each section with Chinese characters in originalTitle: REQUIRED "pinyinTitle" field
+- Use standard Hanyu Pinyin with tone marks (e.g., "má là huǒ guō" for 麻辣火锅, "gōng bǎo jī dīng" for 宫保鸡丁)
+- Space pinyin by word/phrase semantically: "hóng shāo ròu" not "hóng shāo ròu"
+- CRITICAL: Do not skip pinyin fields for Chinese text - they are essential for pronunciation
+- If the menu contains NO Chinese characters, omit pinyin fields entirely
 
 PRICING:
 - For prices: Handle various formats carefully. Common patterns include:
@@ -180,6 +181,7 @@ VERIFICATION CHECKLIST:
 ✓ Generated stable kebab-case IDs with 4-character suffixes
 ✓ Counted total items extracted and verified completeness
 ✓ All translations are in ${explicitLanguage}
+✓ Added pinyin fields for ALL Chinese characters (if menu contains Chinese)
 
 TARGET LANGUAGE: ${explicitLanguage} - Ensure ALL translated text uses this language.
 
