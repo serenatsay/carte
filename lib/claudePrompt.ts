@@ -7,12 +7,15 @@ Return ONLY strict JSON (no code fences) matching this TypeScript-like schema:
     id: string,
     originalTitle?: string,
     translatedTitle?: string,
+    pinyinTitle?: string,
     items: Array<{
       id: string,
       originalName: string,
       originalDescription?: string,
       translatedName: string,
       translatedDescription?: string,
+      pinyin?: string,
+      pinyinDescription?: string,
       culturalNotes?: string,
       allergens: Array<
         "nuts"|"peanuts"|"dairy"|"gluten"|"soy"|"eggs"|"shellfish"|"fish"|"sesame"|"none"
@@ -80,6 +83,15 @@ CONTENT PARSING:
 - Note cultural significance and mark items as Local Specialty or Must Try when appropriate.
 - List common allergens for each item. If unknown, use ["none"].
 - Estimate spice level (0-5) and dietary categories when relevant.
+
+PINYIN ROMANIZATION (for Chinese menus):
+- If the original menu text contains Chinese characters (Simplified or Traditional), include pinyin romanization.
+- Add "pinyin" field to items with the pinyin romanization of originalName.
+- Add "pinyinDescription" field if originalDescription contains Chinese characters.
+- Add "pinyinTitle" field to sections if originalTitle contains Chinese characters.
+- Use standard Hanyu Pinyin with tone marks (e.g., "má là huǒ guō" for 麻辣火锅).
+- Pinyin should be properly spaced by word/phrase, not character-by-character.
+- If the menu is NOT in Chinese, omit the pinyin fields entirely.
 
 PRICING:
 - For prices: Handle various formats carefully. Common patterns include:

@@ -20,6 +20,11 @@ function ItemRow({ sectionId, item }: { sectionId: string; item: MenuItem }) {
           <h4 className="font-semibold text-gray-900 text-lg">
             {item.translatedName}
           </h4>
+          {item.pinyin && (
+            <div className="text-sm text-blue-600 mt-1 italic">
+              {item.pinyin}
+            </div>
+          )}
           <div className="text-sm text-gray-600 mt-1">
             {item.originalName}
           </div>
@@ -40,7 +45,12 @@ function ItemRow({ sectionId, item }: { sectionId: string; item: MenuItem }) {
             ))}
           </div>
           {item.translatedDescription && (
-            <p className="text-sm text-gray-600 mt-3 leading-relaxed">{item.translatedDescription}</p>
+            <div className="mt-3">
+              <p className="text-sm text-gray-600 leading-relaxed">{item.translatedDescription}</p>
+              {item.pinyinDescription && (
+                <p className="text-xs text-blue-600 mt-1 italic">{item.pinyinDescription}</p>
+              )}
+            </div>
           )}
           {item.culturalNotes && (
             <p className="text-xs text-gray-500 mt-2 italic">{item.culturalNotes}</p>
@@ -75,9 +85,16 @@ export default function MenuDisplay({ sections }: { sections: MenuSection[] }) {
     <div className="space-y-8">
       {sections.map((s) => (
         <section key={s.id}>
-          <h2 className="text-xl font-bold text-gray-900 uppercase tracking-wide mb-4">
-            {s.translatedTitle || s.originalTitle || "Section"}
-          </h2>
+          <div className="mb-4">
+            <h2 className="text-xl font-bold text-gray-900 uppercase tracking-wide">
+              {s.translatedTitle || s.originalTitle || "Section"}
+            </h2>
+            {s.pinyinTitle && (
+              <div className="text-sm text-blue-600 italic mt-1">
+                {s.pinyinTitle}
+              </div>
+            )}
+          </div>
           <div className="space-y-4">
             {s.items.map((item) => (
               <ItemRow key={item.id} sectionId={s.id} item={item} />
