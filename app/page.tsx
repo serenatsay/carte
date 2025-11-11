@@ -195,7 +195,33 @@ export default function Home() {
         )}
 
         {error && (
-          <div className="mt-4 text-red-600 text-sm">{error}</div>
+          <div className="mt-4 bg-red-50 border-2 border-red-200 rounded-lg p-4 shadow-sm">
+            <div className="flex items-start gap-3">
+              <div className="flex-shrink-0 w-6 h-6 mt-0.5">
+                <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <div className="flex-1">
+                <h3 className="text-red-800 font-semibold text-base mb-1">{t.error || "Error"}</h3>
+                <p className="text-red-700 text-sm mb-3">{error}</p>
+                <div className="flex gap-2">
+                  <button
+                    onClick={handleRetryTranslation}
+                    className="px-4 py-2 bg-red-600 text-white text-sm rounded-lg hover:bg-red-700 transition-colors"
+                  >
+                    {t.tryAgain || "Try Again"}
+                  </button>
+                  <button
+                    onClick={handleRetake}
+                    className="px-4 py-2 bg-white text-red-600 text-sm rounded-lg border-2 border-red-600 hover:bg-red-50 transition-colors"
+                  >
+                    {t.takeNewPhoto || "Take New Photo"}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
         )}
 
         {menu && (

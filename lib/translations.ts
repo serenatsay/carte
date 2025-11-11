@@ -57,6 +57,9 @@ export interface Translations {
   // Errors
   failedToParseMenu: string;
   failedToGeneratePickForMe: string;
+  error: string;
+  tryAgain: string;
+  takeNewPhoto: string;
 }
 
 export const translations: Record<string, Translations> = {
@@ -101,7 +104,10 @@ export const translations: Record<string, Translations> = {
     cameraError: "Camera error",
     retrying: "Retrying...",
     failedToParseMenu: "Failed to parse menu",
-    failedToGeneratePickForMe: "Failed to generate order"
+    failedToGeneratePickForMe: "Failed to generate order",
+    error: "Error",
+    tryAgain: "Try Again",
+    takeNewPhoto: "Take New Photo"
   },
 
   Spanish: {
@@ -145,7 +151,10 @@ export const translations: Record<string, Translations> = {
     cameraError: "Error de cámara",
     retrying: "Reintentando...",
     failedToParseMenu: "Error al analizar el menú",
-    failedToGeneratePickForMe: "Error al generar orden"
+    failedToGeneratePickForMe: "Error al generar orden",
+    error: "Error",
+    tryAgain: "Intentar de Nuevo",
+    takeNewPhoto: "Tomar Nueva Foto"
   },
 
   French: {
@@ -189,7 +198,10 @@ export const translations: Record<string, Translations> = {
     cameraError: "Erreur de caméra",
     retrying: "Nouvelle tentative...",
     failedToParseMenu: "Échec de l'analyse du menu",
-    failedToGeneratePickForMe: "Échec de la génération de commande"
+    failedToGeneratePickForMe: "Échec de la génération de commande",
+    error: "Erreur",
+    tryAgain: "Réessayer",
+    takeNewPhoto: "Prendre Nouvelle Photo"
   },
 
   "Chinese Traditional": {
@@ -233,7 +245,10 @@ export const translations: Record<string, Translations> = {
     cameraError: "相機錯誤",
     retrying: "重試中...",
     failedToParseMenu: "解析菜單失敗",
-    failedToGeneratePickForMe: "生成訂單失敗"
+    failedToGeneratePickForMe: "生成訂單失敗",
+    error: "錯誤",
+    tryAgain: "再試一次",
+    takeNewPhoto: "拍攝新照片"
   },
 
   Russian: {
@@ -277,7 +292,10 @@ export const translations: Record<string, Translations> = {
     cameraError: "Ошибка камеры",
     retrying: "Повторная попытка...",
     failedToParseMenu: "Не удалось проанализировать меню",
-    failedToGeneratePickForMe: "Не удалось создать заказ"
+    failedToGeneratePickForMe: "Не удалось создать заказ",
+    error: "Ошибка",
+    tryAgain: "Попробовать Снова",
+    takeNewPhoto: "Сделать Новое Фото"
   }
 };
 

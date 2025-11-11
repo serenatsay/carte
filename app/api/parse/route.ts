@@ -107,8 +107,24 @@ export async function POST(req: NextRequest) {
       const text = await anthropicRes.text();
       console.error(`Claude API Error (${anthropicRes.status}):`, text);
       console.error(`Image size estimate:`, imageBase64?.length ? `${Math.round(imageBase64.length * 0.75 / 1024)}KB` : 'unknown');
+
+      let userMessage = "Failed to analyze the menu image.";
+
+      // Provide specific error messages based on status code
+      if (anthropicRes.status === 400) {
+        userMessage = "The image is invalid or too large. Try a smaller, clearer photo.";
+      } else if (anthropicRes.status === 401 || anthropicRes.status === 403) {
+        userMessage = "API authentication error. Please contact support.";
+      } else if (anthropicRes.status === 429) {
+        userMessage = "Too many requests. Please wait a moment and try again.";
+      } else if (anthropicRes.status === 500 || anthropicRes.status === 502 || anthropicRes.status === 503) {
+        userMessage = "The AI service is temporarily unavailable. Please try again in a moment.";
+      } else if (anthropicRes.status === 529) {
+        userMessage = "The service is overloaded. Please try again in a few moments.";
+      }
+
       return new Response(
-        JSON.stringify({ ok: false, error: `Claude request failed (${anthropicRes.status}): ${text}` }),
+        JSON.stringify({ ok: false, error: userMessage }),
         { status: 502, headers: { "content-type": "application/json" } }
       );
     }
@@ -131,7 +147,24 @@ export async function POST(req: NextRequest) {
     }
 
     if (!parsed || !isParsedMenu(parsed)) {
-      const resp: ParseMenuResponseBody = { ok: false, error: "Failed to parse structured menu JSON" };
+      // Log the actual response for debugging
+      console.error("❌ Failed to parse menu JSON. Claude response:", text.substring(0, 500));
+      console.error("Parsed object:", parsed);
+
+      let errorMessage = "Unable to parse the menu from this image.";
+
+      // Provide more specific guidance based on what we got back
+      if (!text || text.length < 10) {
+        errorMessage = "Claude returned an empty response. The image might be too unclear or not contain a menu.";
+      } else if (text.length > 100000) {
+        errorMessage = "The menu is too complex to process. Try photographing just one section of the menu.";
+      } else if (!parsed) {
+        errorMessage = "Could not understand the menu format. Try a clearer photo with better lighting.";
+      } else {
+        errorMessage = "The menu structure couldn't be parsed. Try photographing a simpler section of the menu.";
+      }
+
+      const resp: ParseMenuResponseBody = { ok: false, error: errorMessage };
       return new Response(JSON.stringify(resp), { status: 502, headers: { "content-type": "application/json" } });
     }
 
@@ -177,7 +210,20 @@ export async function POST(req: NextRequest) {
     const resp: ParseMenuResponseBody = { ok: true, menu: parsed };
     return new Response(JSON.stringify(resp), { status: 200, headers: { "content-type": "application/json" } });
   } catch (err: any) {
-    const resp: ParseMenuResponseBody = { ok: false, error: err?.message || "Unknown error" };
+    console.error("❌ Unexpected error in parse route:", err);
+
+    let errorMessage = "An unexpected error occurred while processing the menu.";
+
+    // Provide helpful messages for common errors
+    if (err?.message?.includes("fetch")) {
+      errorMessage = "Network error. Please check your connection and try again.";
+    } else if (err?.message?.includes("timeout")) {
+      errorMessage = "Request timed out. The menu might be too complex. Try a simpler photo.";
+    } else if (err?.message?.includes("JSON")) {
+      errorMessage = "Failed to process the response. Please try again.";
+    }
+
+    const resp: ParseMenuResponseBody = { ok: false, error: errorMessage };
     return new Response(JSON.stringify(resp), { status: 500, headers: { "content-type": "application/json" } });
   }
 }
