@@ -185,6 +185,20 @@ VERIFICATION CHECKLIST:
 
 TARGET LANGUAGE: ${explicitLanguage} - Ensure ALL translated text uses this language.
 
+EXAMPLE OUTPUT for Chinese menu item:
+{
+  "id": "mapo-tofu-1a2b",
+  "originalName": "麻婆豆腐",
+  "translatedName": "Mapo Tofu",
+  "pinyin": "má pó dòu fu",
+  "originalDescription": "辣味豆腐配猪肉末",
+  "translatedDescription": "Spicy tofu with minced pork",
+  "pinyinDescription": "là wèi dòu fu pèi zhū ròu mò",
+  "allergens": ["soy"],
+  "spiceLevel": 4,
+  "price": { "amount": 68, "currency": "CNY", "raw": "¥68" }
+}
+
 Respond with JSON only as per the schema.`;
 }
 

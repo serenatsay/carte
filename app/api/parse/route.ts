@@ -174,9 +174,11 @@ export async function POST(req: NextRequest) {
         section.items.map(item => ({
           name: item.translatedName || item.originalName,
           original: item.originalName,
+          pinyin: item.pinyin,
           price: item.price?.amount,
           priceRaw: item.price?.raw,
-          section: section.translatedTitle || section.originalTitle
+          section: section.translatedTitle || section.originalTitle,
+          sectionPinyin: section.pinyinTitle
         }))
       );
 
@@ -189,15 +191,18 @@ export async function POST(req: NextRequest) {
       console.log("\n📋 All parsed items with debug info:");
       allItems.forEach((item, i) => {
         const priceStr = item.price ? `€${item.price}` : (item.priceRaw || 'No price');
-        console.log(`${i + 1}. "${item.name}" (Original: "${item.original}") - ${priceStr} [${item.section || 'No section'}]`);
+        const pinyinStr = item.pinyin ? ` [Pinyin: "${item.pinyin}"]` : ' [No pinyin]';
+        console.log(`${i + 1}. "${item.name}" (Original: "${item.original}")${pinyinStr} - ${priceStr} [${item.section || 'No section'}]`);
       });
 
       // Show raw section data
       console.log("\n🔍 Raw section structure:");
       parsed.sections.forEach((section, i) => {
-        console.log(`Section ${i + 1}: "${section.translatedTitle || section.originalTitle}" (${section.items.length} items)`);
+        const sectionPinyin = section.pinyinTitle ? ` (Pinyin: "${section.pinyinTitle}")` : '';
+        console.log(`Section ${i + 1}: "${section.translatedTitle || section.originalTitle}"${sectionPinyin} (${section.items.length} items)`);
         section.items.slice(0, 3).forEach((item, j) => {
-          console.log(`  - ${j + 1}. "${item.originalName}" → "${item.translatedName}"`);
+          const itemPinyin = item.pinyin ? ` [${item.pinyin}]` : '';
+          console.log(`  - ${j + 1}. "${item.originalName}"${itemPinyin} → "${item.translatedName}"`);
         });
         if (section.items.length > 3) {
           console.log(`  - ... and ${section.items.length - 3} more items`);
